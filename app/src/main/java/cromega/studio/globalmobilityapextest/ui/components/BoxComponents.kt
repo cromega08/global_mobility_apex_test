@@ -14,6 +14,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 
+/**
+ * [Composable] component to contain the [GifImage] and a background loader while the GIF is rendered.
+ *
+ * @param modifier [Modifier] to modify the container and the GIF
+ * @param context [Context] instances to render the GIF
+ * @param data [String] representing the URI of the desired GIF to render
+ * @param contentDescription [String]? to describe the GIF image, improving the accessibility
+ */
 @Composable
 fun Gif(
     modifier: Modifier = Modifier,

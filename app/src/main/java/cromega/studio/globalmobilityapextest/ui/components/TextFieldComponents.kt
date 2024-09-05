@@ -15,6 +15,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
+/**
+ * [Composable] component to represent a search bar, modifying a [TextField].
+ *
+ * @param modifier [Modifier] instance to modify the TextField below
+ * @param hint [String] that give a hint about the use of the search bar
+ * @param query [String] that represent the content of the TextField
+ * @param onQueryChange ([String]) -> [Unit] that contains the code to execute
+ * when the content is modified
+ * @param onSearch [KeyboardActionScope].() -> [Unit] that contains the code to execute
+ * when the [KeyboardActions] configured with the [ImeAction.Search] is triggered
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(

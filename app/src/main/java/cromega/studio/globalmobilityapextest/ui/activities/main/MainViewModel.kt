@@ -17,6 +17,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * ViewModel class for the "Main*" activity of the app.
+ * Contains the GiphyApiInterface instance for api calls
+ * and handle the most import States and data related to requests.
+ *
+ * @param connectivityManager ConectivityManager instance required
+ * for ensuring the Internet connection of the device
+ */
 class MainViewModel(
     private val connectivityManager: ConnectivityManager
 ) : ViewModel()
@@ -42,6 +50,10 @@ class MainViewModel(
         getTrending()
     }
 
+    /**
+     * Request designed to retrieve the "default" data through "trending" Giphy endpoint.
+     * Result are saved through MainViewModel States update.
+     */
     fun getTrending()
     {
         viewModelScope.launch {
@@ -82,7 +94,14 @@ class MainViewModel(
         }
     }
 
-    fun searchGifs(query: String) {
+    /**
+     * Request designed to retrieve filtered results through "search" Giphy endpoint.
+     * Result are saved through MainViewModel States update.
+     *
+     * @param query String that represent the query to be send, establishing the Gifs to be received
+     */
+    fun searchGifs(query: String)
+    {
         viewModelScope.launch {
             lastSearch = query
 
@@ -119,6 +138,13 @@ class MainViewModel(
         }
     }
 
+
+    /**
+     * Private function, used to check if the device has connection before calling the Giphy API requests.
+     * Current function depends on MainViewModel.connectivityManager property.
+     *
+     * @return Boolean value indicating if the current device has Internet connection
+     */
     private fun hasNetwork(): Boolean
     {
         val networkCapabilities: NetworkCapabilities? =

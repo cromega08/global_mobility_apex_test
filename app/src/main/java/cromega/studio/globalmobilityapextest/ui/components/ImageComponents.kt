@@ -13,6 +13,14 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 
+/**
+ * [Composable] component that contains the logic to render a GIF image.
+ *
+ * @param modifier [Modifier] instance that modify GIF style
+ * @param context [Context] used to render the GIF
+ * @param data [String] indicating the URI to the GIF
+ * @param contentDescription [String]? that describes the GIF, improving accessibility
+ */
 @Composable
 fun GifImage(
     modifier: Modifier = Modifier,

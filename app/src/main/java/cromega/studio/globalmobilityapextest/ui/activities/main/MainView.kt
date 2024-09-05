@@ -34,7 +34,12 @@ import cromega.studio.globalmobilityapextest.ui.components.Gif
 import cromega.studio.globalmobilityapextest.ui.components.SearchBar
 import cromega.studio.globalmobilityapextest.ui.components.WarningIcon
 
-
+/**
+ * [Composable] main method to render the UI of the app through a [Scaffold].
+ *
+ * @param mainViewModel [MainViewModel] instance to retrieve data and
+ * be passed through different son components
+ */
 @Composable
 fun Screen(mainViewModel: MainViewModel)
 {
@@ -57,6 +62,12 @@ fun Screen(mainViewModel: MainViewModel)
         }
     )
 }
+
+/**
+ * [Composable] component to render the top part of the UI ([Scaffold].topBar)
+ *
+ * @param mainViewModel [MainViewModel] instance to call requests
+ */
 @Composable
 private fun Header(mainViewModel: MainViewModel) {
     var query by remember { mutableStateOf("") }
@@ -94,6 +105,12 @@ private fun Header(mainViewModel: MainViewModel) {
     }
 }
 
+/**
+ * [Composable] component to render the content retrieved for the important data
+ *
+ * @param paddingValues [PaddingValues] to implement border space for the rendered content
+ * @param gifs [List]<[GifInfo]> instance, representing the data to be rendered
+ */
 @Composable
 private fun Body(paddingValues: PaddingValues, gifs: List<GifInfo>) {
     val existGifs: Boolean = gifs.isNotEmpty()
@@ -133,6 +150,14 @@ private fun Body(paddingValues: PaddingValues, gifs: List<GifInfo>) {
     }
 }
 
+/**
+ * [Composable] component designed to be a "fallback" for "[Body]" [Composable],
+ * in case there's an error with the Network or Request's
+ *
+ * @param paddingValues [PaddingValues] to implement border space for the rendered content
+ * @param errorMessage [String] to be displayed as informative message on the "Error Components"
+ * @param mainViewModel [MainViewModel] instance to call requests when "retrying the connection"
+ */
 @Composable
 private fun ErrorBody(paddingValues: PaddingValues, errorMessage: String, mainViewModel: MainViewModel) {
     Column(

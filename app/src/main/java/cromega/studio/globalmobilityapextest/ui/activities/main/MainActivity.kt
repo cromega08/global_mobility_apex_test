@@ -8,6 +8,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import cromega.studio.globalmobilityapextest.ui.theme.GlobalMobilityApexTestTheme
 
+/**
+ * Main [ComponentActivity] of the app (Also, the only one)
+ * and responsible for loading the ViewModel ([MainViewModel])
+ * and start the screen
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
