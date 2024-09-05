@@ -1,5 +1,7 @@
 package cromega.studio.globalmobilityapextest.ui.activities.main
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,7 +13,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val mainViewModel: MainViewModel = MainViewModel()
+        val mainViewModel: MainViewModel =
+            MainViewModel(
+                connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            )
 
         setContent {
             GlobalMobilityApexTestTheme {

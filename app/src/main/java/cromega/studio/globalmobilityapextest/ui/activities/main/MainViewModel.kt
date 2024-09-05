@@ -1,6 +1,7 @@
 package cromega.studio.globalmobilityapextest.ui.activities.main
 
-import android.util.Log
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -11,24 +12,29 @@ import cromega.studio.globalmobilityapextest.api.generic.RetrofitInstance
 import cromega.studio.globalmobilityapextest.api.interfaces.GiphyApiInterface
 import cromega.studio.globalmobilityapextest.models.GifFull
 import cromega.studio.globalmobilityapextest.models.GifInfo
-import cromega.studio.globalmobilityapextest.models.PaginationInfo
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainViewModel : ViewModel()
+class MainViewModel(
+    private val connectivityManager: ConnectivityManager
+) : ViewModel()
 {
     private val api: GiphyApiInterface = RetrofitInstance.retrofit.create(GiphyApiInterface::class.java)
 
     private val _gifs: MutableLiveData<List<GifInfo>> = MutableLiveData<List<GifInfo>>()
-    private val _paginationInfo: MutableState<PaginationInfo?> = mutableStateOf(null)
+    private val _responseError: MutableState<Boolean> = mutableStateOf(false)
+    private val _networkError: MutableState<Boolean> = mutableStateOf(false)
 
     val gifs: LiveData<List<GifInfo>>
         get() = _gifs
 
-    val paginationInfo: PaginationInfo?
-        get() = _paginationInfo.value
+    val responseError: Boolean
+        get() = _responseError.value
+
+    val networkError: Boolean
+        get() = _networkError.value
 
     init {
         getTrending()
@@ -37,55 +43,79 @@ class MainViewModel : ViewModel()
     fun getTrending()
     {
         viewModelScope.launch {
-            api
-                .getTrending()
-                .enqueue(
-                    object : Callback<GifFull>
-                    {
-                        override fun onResponse(call: Call<GifFull>, response: Response<GifFull>)
+            if (!hasNetwork())
+            {
+                _networkError.value = true
+            }
+            else {
+                api
+                    .getTrending()
+                    .enqueue(
+                        object : Callback<GifFull>
                         {
-                            if (!response.isSuccessful) {
-                                return
+                            override fun onResponse(call: Call<GifFull>, response: Response<GifFull>)
+                            {
+                                if (!response.isSuccessful) {
+                                    return
+                                }
+
+                                val gifFull: GifFull = response.body()!!
+
+                                _gifs.value = gifFull.data
+                                _responseError.value = false
                             }
 
-                            val gifFull: GifFull = response.body()!!
-
-                            _gifs.value = gifFull.data
-                            _paginationInfo.value = gifFull.pagination
+                            override fun onFailure(call: Call<GifFull>, t: Throwable)
+                            {
+                                _responseError.value = true
+                            }
                         }
-
-                        override fun onFailure(call: Call<GifFull>, t: Throwable)
-                        {
-                            Log.e("", "")
-                        }
-                    }
-                )
+                    )
+            }
         }
     }
 
     fun searchGifs(query: String) {
         viewModelScope.launch {
-            api
-                .searchGifs(query)
-                .enqueue(
-                    object : Callback<GifFull>
-                    {
-                        override fun onResponse(call: Call<GifFull>, response: Response<GifFull>)
+            if (!hasNetwork())
+            {
+                _networkError.value = true
+            }
+            else {
+                api
+                    .searchGifs(query)
+                    .enqueue(
+                        object : Callback<GifFull>
                         {
-                            if (!response.isSuccessful) {return}
+                            override fun onResponse(call: Call<GifFull>, response: Response<GifFull>)
+                            {
+                                if (!response.isSuccessful) {return}
 
-                            val gifFull: GifFull = response.body()!!
+                                val gifFull: GifFull = response.body()!!
 
-                            _gifs.value = gifFull.data
-                            _paginationInfo.value = gifFull.pagination
+                                _gifs.value = gifFull.data
+                                _responseError.value = false
+                            }
+
+                            override fun onFailure(call: Call<GifFull>, t: Throwable)
+                            {
+                                _responseError.value = true
+                            }
                         }
+                    )
+            }
 
-                        override fun onFailure(call: Call<GifFull>, t: Throwable)
-                        {
-                            Log.e("", "")
-                        }
-                    }
-                )
+
         }
+    }
+
+    private fun hasNetwork(): Boolean
+    {
+        val networkCapabilities: NetworkCapabilities? =
+            connectivityManager.activeNetwork?.let {
+                connectivityManager.getNetworkCapabilities(it)
+            }
+
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 }
