@@ -58,7 +58,7 @@ fun Screen(mainViewModel: MainViewModel)
     )
 }
 @Composable
-fun Header(mainViewModel: MainViewModel) {
+private fun Header(mainViewModel: MainViewModel) {
     var query by remember { mutableStateOf("") }
 
     Column(
@@ -95,7 +95,7 @@ fun Header(mainViewModel: MainViewModel) {
 }
 
 @Composable
-fun Body(paddingValues: PaddingValues, gifs: List<GifInfo>) {
+private fun Body(paddingValues: PaddingValues, gifs: List<GifInfo>) {
     val existGifs: Boolean = gifs.isNotEmpty()
     val amount: Int = if (existGifs) gifs.size - 1 else 20
 
@@ -134,7 +134,7 @@ fun Body(paddingValues: PaddingValues, gifs: List<GifInfo>) {
 }
 
 @Composable
-fun ErrorBody(paddingValues: PaddingValues, errorMessage: String, mainViewModel: MainViewModel) {
+private fun ErrorBody(paddingValues: PaddingValues, errorMessage: String, mainViewModel: MainViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
