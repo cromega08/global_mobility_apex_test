@@ -36,6 +36,8 @@ class MainViewModel(
     val networkError: Boolean
         get() = _networkError.value
 
+    var lastSearch: String = ""
+
     init {
         getTrending()
     }
@@ -43,11 +45,16 @@ class MainViewModel(
     fun getTrending()
     {
         viewModelScope.launch {
+            lastSearch = ""
+
             if (!hasNetwork())
             {
                 _networkError.value = true
             }
             else {
+                _networkError.value = false
+                _gifs.value = emptyList()
+
                 api
                     .getTrending()
                     .enqueue(
@@ -77,11 +84,16 @@ class MainViewModel(
 
     fun searchGifs(query: String) {
         viewModelScope.launch {
+            lastSearch = query
+
             if (!hasNetwork())
             {
                 _networkError.value = true
             }
             else {
+                _networkError.value = false
+                _gifs.value = emptyList()
+
                 api
                     .searchGifs(query)
                     .enqueue(
@@ -104,8 +116,6 @@ class MainViewModel(
                         }
                     )
             }
-
-
         }
     }
 

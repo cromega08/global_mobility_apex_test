@@ -1,15 +1,20 @@
 package cromega.studio.globalmobilityapextest.ui.activities.main
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import cromega.studio.globalmobilityapextest.models.GifInfo
 import cromega.studio.globalmobilityapextest.models.Image
@@ -45,7 +51,7 @@ fun Screen(mainViewModel: MainViewModel)
                     if (networkError) "No Internet Connection"
                     else "Request Error"
 
-                ErrorBody(paddingValues = it, errorMessage = message)
+                ErrorBody(paddingValues = it, errorMessage = message, mainViewModel = mainViewModel)
             }
             else Body(paddingValues = it, gifs = gifs)
         }
@@ -57,20 +63,20 @@ fun Header(mainViewModel: MainViewModel) {
 
     Column(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White)
+        Modifier
+            .fillMaxWidth()
+            .background(Color.White)
     ) {
         SearchBar(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = 35.dp,
-                        bottom = 10.dp,
-                        start = 10.dp,
-                        end = 10.dp
-                    ),
+            Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = 35.dp,
+                    bottom = 10.dp,
+                    start = 10.dp,
+                    end = 10.dp
+                ),
             hint = "Search",
             query = query,
             onQueryChange = {
@@ -128,7 +134,7 @@ fun Body(paddingValues: PaddingValues, gifs: List<GifInfo>) {
 }
 
 @Composable
-fun ErrorBody(paddingValues: PaddingValues, errorMessage: String) {
+fun ErrorBody(paddingValues: PaddingValues, errorMessage: String, mainViewModel: MainViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -136,7 +142,23 @@ fun ErrorBody(paddingValues: PaddingValues, errorMessage: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        val context: Context = LocalContext.current
+
         WarningIcon()
+
         Text(errorMessage)
+
+       Spacer(
+           modifier = Modifier.fillMaxWidth().height(10.dp)
+       )
+
+        Button(onClick = {
+            if (mainViewModel.lastSearch.isBlank()) mainViewModel.getTrending()
+            else mainViewModel.searchGifs(mainViewModel.lastSearch)
+
+            Toast.makeText(context, "Retrying...", Toast.LENGTH_SHORT).show()
+        }) {
+            Text("Retry")
+        }
     }
 }
